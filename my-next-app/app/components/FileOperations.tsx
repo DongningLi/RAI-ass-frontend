@@ -1,25 +1,21 @@
 //external import
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import UploadIcon from "@mui/icons-material/Upload";
-import { IconButton } from "@mui/material";
 
-const renderNavbar = () => {
-  return (
-    <Grid
-      className={`inset-x-0 absolute bottom-4 items-center justify-center inline-flex`}
-    >
-      <IconButton aria-label="upload-test" size="large">
-        <UploadIcon />
-      </IconButton>
-    </Grid>
-  );
-};
+import UploadIcon from "@mui/icons-material/Upload";
+import { Box, IconButton } from "@mui/material";
+import BasicModal from "./wrappers/BasicModal";
+import NewFileUploadedModal from "./modals/NewFileUploadedModal";
 
 function FileOperations() {
   return (
-    <div className="w-[362px] min-w-[150px] h-full bg-[#FBF3FB] mr-[12px] relative ">
-      {renderNavbar()}
+    <div className="flex w-[362px] min-w-[150px] h-full bg-[#FBF3FB] mr-[12px] justify-center items-center ">
+      <Box>
+        <BasicModal modalContent={<NewFileUploadedModal />}>
+          Upload File
+          <IconButton size="large">
+            <UploadIcon />
+          </IconButton>
+        </BasicModal>
+      </Box>
     </div>
   );
 }

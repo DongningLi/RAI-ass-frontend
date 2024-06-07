@@ -1,20 +1,18 @@
-import FileContent from "./components/FileContent";
+"use client";
+import { FileContent } from "./components/FileContent";
 import FileOperations from "./components/FileOperations";
+import { FileContentContextProvider } from "./context/FileContext";
 
-const Home = () => {
-  // hooks -------------------------------------------------------------------
-
-  // handlers ----------------------------------------------------------------
-
+const Page = () => {
   // jsx ---------------------------------------------------------------------
   return (
-    <div className="w-full mt-[12px] grow">
-      <div className="flex flex-row h-full">
+    <FileContentContextProvider>
+      <div className="flex h-dvh h-lvh">
         <FileOperations />
         <FileContent />
       </div>
-    </div>
+    </FileContentContextProvider>
   );
 };
 
-export default Home;
+export default Page;
