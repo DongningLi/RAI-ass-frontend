@@ -3,7 +3,7 @@ import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { uploadNewFilelRequest } from "@/app/utils/http";
-import { recordContentType } from "@/app/interface/common";
+import { recordContentType, recordTypesType } from "@/app/interface/common";
 import { useFileContentContext } from "@/app/context/FileContext";
 import { usePopupModalContext } from "./PopupModal";
 
@@ -19,7 +19,8 @@ const NewFileUploadedModal = () => {
     formState: { errors },
   } = useForm<NewFileFormInputs>();
 
-  const { setRecordContent } = useFileContentContext();
+  const { setRecordContent, recordType, setRecordType } =
+    useFileContentContext();
   const { handleModalClose } = usePopupModalContext();
 
   // handlers ----------------------------------------------------------------
@@ -29,8 +30,13 @@ const NewFileUploadedModal = () => {
 
     try {
       const response = await uploadNewFilelRequest(file);
-      const fileContentsUploaded = response.data as recordContentType[];
+      const fileData = response.data;
+
+      const fileContentsUploaded = fileData.contents as recordContentType[];
+      const fileTypeUploaded = fileData.types as recordTypesType;
+
       setRecordContent(fileContentsUploaded);
+      setRecordType(fileTypeUploaded);
     } catch (err) {
       if (err instanceof Error) {
         //TODO: show error message in snackbar
