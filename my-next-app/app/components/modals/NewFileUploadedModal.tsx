@@ -30,6 +30,7 @@ const NewFileUploadedModal = () => {
 
     try {
       const response = await uploadNewFilelRequest(file);
+      console.log("--------response-------", response);
       const fileData = response.data;
 
       const fileContentsUploaded = fileData.contents as recordContentType[];

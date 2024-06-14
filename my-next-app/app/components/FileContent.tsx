@@ -13,7 +13,11 @@ import {
 import { v4 as uuidv4 } from "uuid";
 
 import { useFileContentContext } from "../context/FileContext";
-import { TypeOptions } from "../interface/common";
+import {
+  TypeOptions,
+  recordContentType,
+  recordTypesType,
+} from "../interface/common";
 import { saveColsTypes } from "../utils/http";
 
 export const FileContent = () => {
@@ -106,6 +110,26 @@ export const FileContent = () => {
     </select>
   );
 
+  const generateHeader = (colTypes: recordTypesType) => {
+    return Object.keys(colTypes)
+      .filter((key) => key !== "fileId" && key !== "_id") // Exclude fileId and _id
+      .map((key) => (
+        <TableCell key={key} className="font-bold text-center">
+          {key}
+        </TableCell>
+      ));
+  };
+
+  const generateFileContent = (ColContentForTable: recordContentType) => {
+    return Object.keys(ColContentForTable)
+      .filter((key) => key !== "fileId" && key !== "_id") // Exclude fileId and _id
+      .map((key) => (
+        <TableCell key={key} className="text-center">
+          {ColContentForTable[key as keyof recordContentType]}
+        </TableCell>
+      ));
+  };
+
   const afterUploadingFile = recordContent && recordType && (
     <div>
       <div className="my-3">
@@ -118,14 +142,7 @@ export const FileContent = () => {
         <TableContainer component={Paper} className="w-full">
           <Table size="small" aria-label="a dense table">
             <TableHead>
-              <TableRow>
-                <TableCell className="font-bold text-center">Name</TableCell>
-                <TableCell className="font-bold text-center">
-                  Birthdate
-                </TableCell>
-                <TableCell className="font-bold text-center">Score</TableCell>
-                <TableCell className="font-bold text-center">Grade</TableCell>
-              </TableRow>
+              <TableRow>{generateHeader(recordType)}</TableRow>
             </TableHead>
             <TableBody>
               <TableRow key={uuidv4()} className="border-black border-2">
@@ -152,14 +169,9 @@ export const FileContent = () => {
               </TableRow>
             </TableBody>
             <TableBody>
-              {recordContent.map((record) => (
+              {recordContent.map((colContent) => (
                 <TableRow key={uuidv4()}>
-                  <TableCell className="text-center">{record.Name}</TableCell>
-                  <TableCell className="text-center">
-                    {record.Birthdate}
-                  </TableCell>
-                  <TableCell className="text-center">{record.Score}</TableCell>
-                  <TableCell className="text-center">{record.Grade}</TableCell>
+                  {generateFileContent(colContent)}
                 </TableRow>
               ))}
             </TableBody>
