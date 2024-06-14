@@ -6,6 +6,7 @@ export enum TypeOptions {
   Category = "category",
   Complex = "complex",
   Time = "timedelta",
+  Bool = "bool",
 }
 
 export const transformOption = (option: string) => {
@@ -38,4 +39,27 @@ export const transformOption = (option: string) => {
   }
 
   return option;
+};
+
+export const convertTypeBack = (selectedType: string) => {
+  if (selectedType === "Text") {
+    return "object";
+  }
+  if (selectedType === "Int") {
+    return "int64";
+  }
+  if (selectedType === "Float") {
+    return "float64";
+  }
+  if (selectedType === "Date") {
+    return "datetime64[ns]";
+  }
+  if (selectedType === "Time Difference") {
+    return "timedelta[ns]";
+  }
+  if (selectedType === "Complex") {
+    return "complex128";
+  }
+
+  return selectedType;
 };

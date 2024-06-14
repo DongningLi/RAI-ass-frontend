@@ -13,7 +13,11 @@ import {
 import { v4 as uuidv4 } from "uuid";
 
 import { useFileContentContext } from "../context/FileContext";
-import { TypeOptions, transformOption } from "../interface/common";
+import {
+  TypeOptions,
+  convertTypeBack,
+  transformOption,
+} from "../interface/common";
 import { saveColsTypes } from "../utils/http";
 
 export const FileContent = () => {
@@ -24,10 +28,7 @@ export const FileContent = () => {
   useEffect(() => {
     if (recordType) {
       const typesObject = Object.fromEntries(
-        Object.entries(recordType).map(([key, value]) => [
-          key,
-          transformOption(value as string),
-        ])
+        Object.entries(recordType).map(([key, value]) => [key, value])
       );
       setSelectedTypes(typesObject);
     }
@@ -48,44 +49,23 @@ export const FileContent = () => {
   };
 
   const handleSaveColsType = () => {
+    for (let key in selectedTypes) {
+      if (convertTypeBack(selectedTypes[key])) {
+        selectedTypes[key] = convertTypeBack(selectedTypes[key]);
+      }
+    }
+
     saveColsTypes(selectedTypes);
   };
 
   // jsx -----------------------------------------------------------------
-  const renderTypeOptions = (
-    colType: string,
-    onChange: React.ChangeEventHandler<HTMLSelectElement> | undefined
-  ) => {
-    console.log("colType:", colType); // Log colType here
-    return (
-      <select
-        className="text-center font-light "
-        value={colType}
-        onChange={onChange}
-      >
-        <option value={transformOption(TypeOptions.Text)}>
-          {transformOption(TypeOptions.Text)}
-        </option>
-        <option value={transformOption(TypeOptions.Int)}>
-          {transformOption(TypeOptions.Int)}
-        </option>
-        <option value={transformOption(TypeOptions.Float)}>
-          {transformOption(TypeOptions.Float)}
-        </option>
-        <option value={transformOption(TypeOptions.Date)}>
-          {transformOption(TypeOptions.Date)}
-        </option>
-        <option value={transformOption(TypeOptions.Complex)}>
-          {transformOption(TypeOptions.Complex)}
-        </option>
-        <option value={transformOption(TypeOptions.Time)}>
-          {transformOption(TypeOptions.Time)}
-        </option>
-        <option value={transformOption(TypeOptions.Category)}>
-          {transformOption(TypeOptions.Category)}
-        </option>
-      </select>
-    );
+
+  const generateOptions = () => {
+    return (Object.values(TypeOptions) as string[]).map((value) => (
+      <option key={value} value={transformOption(value)}>
+        {transformOption(value)}
+      </option>
+    ));
   };
 
   const generateHeader = (colTypes: any) => {
@@ -116,6 +96,22 @@ export const FileContent = () => {
           {ColContentForTable[key]}
         </TableCell>
       ));
+  };
+
+  const renderTypeOptions = (
+    colType: string,
+    onChange: React.ChangeEventHandler<HTMLSelectElement> | undefined
+  ) => {
+    console.log("colType:", colType); // Log colType here
+    return (
+      <select
+        className="text-center font-light "
+        value={transformOption(colType)}
+        onChange={onChange}
+      >
+        {generateOptions()}
+      </select>
+    );
   };
 
   const afterUploadingFile = recordContent && recordType && (
@@ -151,7 +147,7 @@ export const FileContent = () => {
           className={`h-[50px] w-[150px] text-center font-bold my-[10px] float-right`}
           onClick={handleSaveColsType}
         >
-          Save Types
+          Update Types
         </Button>
       </div>
     </div>

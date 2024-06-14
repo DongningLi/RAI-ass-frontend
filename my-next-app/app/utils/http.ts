@@ -17,6 +17,7 @@ export const uploadNewFilelRequest = async (file: File) => {
 
 export const saveColsTypes = async (selectedTypes: any) => {
   const recordTypesStr = JSON.stringify(selectedTypes);
+  console.log("selected types ------:", recordTypesStr);
   const formData = new FormData();
   formData.append("data", recordTypesStr);
 
