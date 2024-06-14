@@ -3,19 +3,12 @@
 //external import
 import React, { createContext, useContext, useState } from "react";
 
-//internal import
-import { recordContentType, recordTypesType } from "../interface/common";
-
 // context and use context hook ------------------------------------------------
 interface FileContentContextInterface {
-  recordType: recordTypesType | undefined;
-  setRecordType: React.Dispatch<
-    React.SetStateAction<recordTypesType | undefined>
-  >;
-  recordContent: recordContentType[] | undefined;
-  setRecordContent: React.Dispatch<
-    React.SetStateAction<recordContentType[] | undefined>
-  >;
+  recordType: any | undefined;
+  setRecordType: React.Dispatch<React.SetStateAction<any | undefined>>;
+  recordContent: any | undefined;
+  setRecordContent: React.Dispatch<React.SetStateAction<any[] | undefined>>;
 }
 
 const FileContentContext = createContext<
@@ -36,11 +29,9 @@ export const FileContentContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [recordContent, setRecordContent] = useState<
-    recordContentType[] | undefined
-  >();
+  const [recordContent, setRecordContent] = useState<any[] | undefined>();
 
-  const [recordType, setRecordType] = useState<recordTypesType | undefined>();
+  const [recordType, setRecordType] = useState<any | undefined>();
 
   return (
     <FileContentContext.Provider

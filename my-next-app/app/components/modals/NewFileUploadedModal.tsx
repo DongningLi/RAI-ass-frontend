@@ -3,7 +3,6 @@ import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { uploadNewFilelRequest } from "@/app/utils/http";
-import { recordContentType, recordTypesType } from "@/app/interface/common";
 import { useFileContentContext } from "@/app/context/FileContext";
 import { usePopupModalContext } from "./PopupModal";
 
@@ -33,8 +32,8 @@ const NewFileUploadedModal = () => {
       console.log("--------response-------", response);
       const fileData = response.data;
 
-      const fileContentsUploaded = fileData.contents as recordContentType[];
-      const fileTypeUploaded = fileData.types as recordTypesType;
+      const fileContentsUploaded = fileData.contents;
+      const fileTypeUploaded = fileData.types;
 
       setRecordContent(fileContentsUploaded);
       setRecordType(fileTypeUploaded);

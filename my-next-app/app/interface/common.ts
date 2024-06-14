@@ -1,23 +1,41 @@
-export interface recordContentType {
-  Name: string;
-  Birthdate: string;
-  Score: string;
-  Grade: string;
-}
-
-export interface recordTypesType {
-  Name: string;
-  Birthdate: string;
-  Score: string;
-  Grade: string;
-}
-
 export enum TypeOptions {
   Text = "object",
-  Int = "int64",
-  Float = "float64",
-  Date = "datetime64[ns]",
+  Int = "int",
+  Float = "float",
+  Date = "date",
   Category = "category",
-  Complex = "complex128",
-  Time = "timedelta64[ns]",
+  Complex = "complex",
+  Time = "timedelta",
 }
+
+export const transformOption = (option: string) => {
+  if (option.includes(TypeOptions.Date)) {
+    return "Date";
+  }
+
+  if (option.includes(TypeOptions.Text)) {
+    return "Text";
+  }
+
+  if (option.includes(TypeOptions.Float)) {
+    return "Float";
+  }
+
+  if (option.includes(TypeOptions.Int)) {
+    return "Int";
+  }
+
+  if (option.includes(TypeOptions.Category)) {
+    return "Category";
+  }
+
+  if (option.includes(TypeOptions.Time)) {
+    return "Time Difference";
+  }
+
+  if (option.includes(TypeOptions.Complex)) {
+    return "Complex";
+  }
+
+  return option;
+};

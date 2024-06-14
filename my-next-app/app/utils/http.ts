@@ -1,6 +1,5 @@
 //external import
 import axios from "axios";
-import { recordTypesType } from "../interface/common";
 
 const SERVER_BASE_URL = "http://localhost:8000";
 
@@ -16,7 +15,7 @@ export const uploadNewFilelRequest = async (file: File) => {
   return await axios.post(`${SERVER_BASE_URL}/upload/`, formData);
 };
 
-export const saveColsTypes = async (selectedTypes: recordTypesType) => {
+export const saveColsTypes = async (selectedTypes: any) => {
   const recordTypesStr = JSON.stringify(selectedTypes);
   const formData = new FormData();
   formData.append("data", recordTypesStr);
