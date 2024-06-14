@@ -18,7 +18,7 @@ import {
   convertTypeBack,
   transformOption,
 } from "../interface/common";
-import { saveColsTypes } from "../utils/http";
+import { generateNewFile, saveColsTypes } from "../utils/http";
 
 export const FileContent = () => {
   const { recordContent, recordType } = useFileContentContext();
@@ -55,9 +55,41 @@ export const FileContent = () => {
       }
     }
 
-    saveColsTypes(selectedTypes);
+    try {
+      saveColsTypes(selectedTypes);
+    } catch (error) {
+      // showSnackbar("Failed to download file", "error");
+    }
   };
 
+  const handleGenerateFile = async () => {
+    const fileId = selectedTypes.fileId;
+    try {
+      const response = await generateNewFile(fileId);
+      console.log(response);
+
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      // Create a link element
+      const link = document.createElement("a");
+      link.href = url;
+
+      // Set the file name
+      link.setAttribute("download", `downloaded_file.csv`);
+
+      // Append to the document body
+      document.body.appendChild(link);
+
+      // Simulate a click to start the download
+      link.click();
+
+      // Cleanup
+      link.parentNode?.removeChild(link);
+    } catch (error) {
+      console.error("Error generating CSV file:", error);
+    }
+  };
   // jsx -----------------------------------------------------------------
 
   const generateOptions = () => {
@@ -117,9 +149,7 @@ export const FileContent = () => {
   const afterUploadingFile = recordContent && recordType && (
     <div>
       <div className="my-3">
-        <label className="text-[20px] font-bold">
-          Records from last uploading
-        </label>
+        <label className="text-[20px] font-bold">Records from uploading</label>
       </div>
 
       <div className="my-3">
@@ -143,11 +173,18 @@ export const FileContent = () => {
           </Table>
         </TableContainer>
         <Button
-          variant="outlined"
-          className={`h-[50px] w-[150px] text-center font-bold my-[10px] float-right`}
+          variant="contained"
+          className={`h-[50px] w-[150px] text-center font-bold my-[10px]`}
           onClick={handleSaveColsType}
         >
           Update Types
+        </Button>
+        <Button
+          variant="contained"
+          className={`h-[50px] w-[200px] text-center font-bold my-[10px] float-right`}
+          onClick={handleGenerateFile}
+        >
+          Generate New File
         </Button>
       </div>
     </div>
