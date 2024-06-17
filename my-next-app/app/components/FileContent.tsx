@@ -1,3 +1,4 @@
+// external import
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -12,27 +13,28 @@ import {
   TableRow,
 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
+import { AxiosError } from "axios";
 
+// internal import
 import { useFileContentContext } from "../context/FileContext";
 import { useSnackbar } from "../context/SnackbarContext";
-
 import {
   TypeOptions,
   convertTypeBack,
   transformOption,
 } from "../interface/common";
-import { generateNewFile, saveColsTypes } from "../utils/http";
-import { AxiosError } from "axios";
+import { generateNewFileRequest, saveColsTypesRequest } from "../utils/http";
 
+// right side of page
 export const FileContent = () => {
   const { showSnackbar } = useSnackbar();
   const { recordContent, recordType } = useFileContentContext();
   const [selectedTypes, setSelectedTypes] = useState([] as any);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
 
   // handlers ------------------------------------------------------------------------
+
   useEffect(() => {
     if (recordType) {
       const typesObject = Object.fromEntries(
@@ -46,6 +48,7 @@ export const FileContent = () => {
     setPage(newPage);
   };
 
+  // set row per page
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -53,11 +56,7 @@ export const FileContent = () => {
     setPage(0);
   };
 
-  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
-  };
-
-  const handleChange = (
+  const handleChangeOption = (
     colName: string,
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -67,6 +66,7 @@ export const FileContent = () => {
     }));
   };
 
+  // update manual selected types
   const handleSaveColsType = async () => {
     for (let key in selectedTypes) {
       if (convertTypeBack(selectedTypes[key])) {
@@ -75,7 +75,7 @@ export const FileContent = () => {
     }
 
     try {
-      const response = await saveColsTypes(selectedTypes);
+      const response = await saveColsTypesRequest(selectedTypes);
 
       if (response.data.statusCode !== 200) {
         throw new Error(response.data.message);
@@ -90,10 +90,11 @@ export const FileContent = () => {
     }
   };
 
+  // receive and download file generated from api
   const handleGenerateFile = async () => {
     const fileId = selectedTypes.fileId;
     try {
-      const response = await generateNewFile(fileId);
+      const response = await generateNewFileRequest(fileId);
 
       // Create a URL for the blob
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -124,10 +125,12 @@ export const FileContent = () => {
   };
   // jsx -----------------------------------------------------------------
 
+  // default page when no file uploaded
   const beforeUploadingFile = recordContent === undefined && (
     <p className="text-[20px]">No File Uploaded</p>
   );
 
+  // generate pre-determined options
   const generateOptions = () => {
     return (Object.values(TypeOptions) as string[]).map((value) => (
       <option key={value} value={transformOption(value)}>
@@ -136,6 +139,7 @@ export const FileContent = () => {
     ));
   };
 
+  // generate headers for table
   const generateHeader = (colTypes: any) => {
     return Object.keys(colTypes)
       .filter((key) => key !== "fileId" && key !== "_id") // Exclude fileId and _id
@@ -146,12 +150,15 @@ export const FileContent = () => {
       ));
   };
 
+  // generate content types for table
   const generateColContentTypes = () => {
     return Object.keys(selectedTypes)
       .filter((key) => key !== "fileId" && key !== "_id") // Exclude fileId and _id
       .map((key) => (
         <TableCell key={key} className="font-bold text-center">
-          {renderTypeOptions(selectedTypes[key], (e) => handleChange(key, e))}
+          {renderTypeOptions(selectedTypes[key], (e) =>
+            handleChangeOption(key, e)
+          )}
         </TableCell>
       ));
   };

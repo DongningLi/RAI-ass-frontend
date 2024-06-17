@@ -3,7 +3,6 @@
 //external import
 import React, { createContext, useContext, useState } from "react";
 
-// context and use context hook ------------------------------------------------
 interface FileContentContextInterface {
   recordType: any | undefined;
   setRecordType: React.Dispatch<React.SetStateAction<any | undefined>>;

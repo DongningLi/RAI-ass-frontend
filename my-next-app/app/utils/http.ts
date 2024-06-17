@@ -3,11 +3,7 @@ import axios from "axios";
 
 const SERVER_BASE_URL = "http://localhost:8000";
 
-//TODO: Auth before sending
-export const setDefaultHeader = (accessToken: string) => {
-  axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-};
-
+// upload file and receive content and types
 export const uploadNewFilelRequest = async (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
@@ -15,7 +11,8 @@ export const uploadNewFilelRequest = async (file: File) => {
   return await axios.post(`${SERVER_BASE_URL}/upload/`, formData);
 };
 
-export const saveColsTypes = async (selectedTypes: any) => {
+// save manually selected types
+export const saveColsTypesRequest = async (selectedTypes: any) => {
   const recordTypesStr = JSON.stringify(selectedTypes);
   const formData = new FormData();
   formData.append("data", recordTypesStr);
@@ -23,6 +20,7 @@ export const saveColsTypes = async (selectedTypes: any) => {
   return await axios.post(`${SERVER_BASE_URL}/savecolstypes/`, formData);
 };
 
-export const generateNewFile = async (fileId: string) => {
+// generate files
+export const generateNewFileRequest = async (fileId: string) => {
   return await axios.post(`${SERVER_BASE_URL}/generateNewFile/${fileId}/`, {});
 };

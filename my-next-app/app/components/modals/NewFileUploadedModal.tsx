@@ -1,20 +1,20 @@
+//external import
 import { Button } from "@mui/material";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { AxiosError } from "axios";
 
+// internal import
+import { usePopupModalContext } from "./PopupModal";
 import { uploadNewFilelRequest } from "@/app/utils/http";
 import { useFileContentContext } from "@/app/context/FileContext";
-import { usePopupModalContext } from "./PopupModal";
 import { useSnackbar } from "@/app/context/SnackbarContext";
-import { AxiosError } from "axios";
 
 type NewFileFormInputs = {
   file: FileList;
 };
 
 const NewFileUploadedModal = () => {
-  // hooks -------------------------------------------------------------------
-
   const { showSnackbar } = useSnackbar();
   const {
     register,
@@ -22,12 +22,10 @@ const NewFileUploadedModal = () => {
     formState: { errors },
   } = useForm<NewFileFormInputs>();
 
-  const { setRecordContent, recordType, setRecordType } =
-    useFileContentContext();
+  const { setRecordContent, setRecordType } = useFileContentContext();
   const { handleModalClose } = usePopupModalContext();
 
   // handlers ----------------------------------------------------------------
-
   const onSubmit: SubmitHandler<NewFileFormInputs> = async (formData) => {
     const file = formData.file[0];
 
@@ -36,6 +34,7 @@ const NewFileUploadedModal = () => {
 
       const fileData = response.data;
 
+      // get contents and types retrun from API
       const fileContentsUploaded = fileData.contents;
       const fileTypeUploaded = fileData.types;
 
@@ -57,6 +56,7 @@ const NewFileUploadedModal = () => {
 
   // jsx ---------------------------------------------------------------------
 
+  // accept file type from ".xls,.xlsx,.csv"
   const fileInput = (
     <div className="m-[50px] ">
       <input

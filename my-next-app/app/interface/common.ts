@@ -1,3 +1,4 @@
+// pre-determined options
 export enum TypeOptions {
   Text = "object",
   Int = "int",
@@ -9,6 +10,7 @@ export enum TypeOptions {
   Bool = "bool",
 }
 
+// convert API-provided options into user-friendly text
 export const transformOption = (option: string) => {
   if (option.includes(TypeOptions.Date)) {
     return "Date";
@@ -41,6 +43,7 @@ export const transformOption = (option: string) => {
   return option;
 };
 
+// convert user-friendly text back to API-provided options
 export const convertTypeBack = (selectedType: string) => {
   if (selectedType === "Text") {
     return "object";

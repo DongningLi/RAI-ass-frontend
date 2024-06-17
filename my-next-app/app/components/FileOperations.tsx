@@ -1,10 +1,12 @@
 //external import
-
 import UploadIcon from "@mui/icons-material/Upload";
 import { Box, IconButton } from "@mui/material";
+
+// internal import
 import BasicModal from "./wrappers/BasicModal";
 import NewFileUploadedModal from "./modals/NewFileUploadedModal";
 
+// left side bar
 function FileOperations() {
   return (
     <div className="flex w-[362px] min-w-[150px] h-full bg-[#FBF3FB] mr-[12px] justify-center items-center ">
