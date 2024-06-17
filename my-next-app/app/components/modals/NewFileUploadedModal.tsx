@@ -5,6 +5,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { uploadNewFilelRequest } from "@/app/utils/http";
 import { useFileContentContext } from "@/app/context/FileContext";
 import { usePopupModalContext } from "./PopupModal";
+import { useSnackbar } from "@/app/context/SnackbarContext";
+import { AxiosError } from "axios";
 
 type NewFileFormInputs = {
   file: FileList;
@@ -12,6 +14,8 @@ type NewFileFormInputs = {
 
 const NewFileUploadedModal = () => {
   // hooks -------------------------------------------------------------------
+
+  const { showSnackbar } = useSnackbar();
   const {
     register,
     handleSubmit,
@@ -29,7 +33,7 @@ const NewFileUploadedModal = () => {
 
     try {
       const response = await uploadNewFilelRequest(file);
-      console.log("--------response-------", response);
+
       const fileData = response.data;
 
       const fileContentsUploaded = fileData.contents;
@@ -37,9 +41,14 @@ const NewFileUploadedModal = () => {
 
       setRecordContent(fileContentsUploaded);
       setRecordType(fileTypeUploaded);
-    } catch (err) {
-      if (err instanceof Error) {
-        //TODO: show error message in snackbar
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        showSnackbar(
+          `Failed to submit file: ${error.response?.data.error}`,
+          "error"
+        );
+      } else {
+        showSnackbar("Failed to submit file.", "error");
       }
     } finally {
       handleModalClose();

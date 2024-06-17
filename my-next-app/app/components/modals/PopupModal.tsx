@@ -18,7 +18,6 @@ interface PopupModalProviderProps {
   value: PopupModalContextType;
 }
 
-// this context is to support compound component pattern for defining BasicModal
 export const PopupModalProvider: FunctionComponent<PopupModalProviderProps> = ({
   children,
   value,

@@ -8,21 +8,29 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 
 import { useFileContentContext } from "../context/FileContext";
+import { useSnackbar } from "../context/SnackbarContext";
+
 import {
   TypeOptions,
   convertTypeBack,
   transformOption,
 } from "../interface/common";
 import { generateNewFile, saveColsTypes } from "../utils/http";
+import { AxiosError } from "axios";
 
 export const FileContent = () => {
+  const { showSnackbar } = useSnackbar();
   const { recordContent, recordType } = useFileContentContext();
   const [selectedTypes, setSelectedTypes] = useState([] as any);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page, setPage] = React.useState(0);
+  const [dense, setDense] = React.useState(false);
 
   // handlers ------------------------------------------------------------------------
   useEffect(() => {
@@ -34,9 +42,20 @@ export const FileContent = () => {
     }
   }, [recordType]);
 
-  const beforeUploadingFile = recordContent === undefined && (
-    <p className="text-[20px]">No File Uploaded</p>
-  );
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDense(event.target.checked);
+  };
 
   const handleChange = (
     colName: string,
@@ -48,7 +67,7 @@ export const FileContent = () => {
     }));
   };
 
-  const handleSaveColsType = () => {
+  const handleSaveColsType = async () => {
     for (let key in selectedTypes) {
       if (convertTypeBack(selectedTypes[key])) {
         selectedTypes[key] = convertTypeBack(selectedTypes[key]);
@@ -56,9 +75,18 @@ export const FileContent = () => {
     }
 
     try {
-      saveColsTypes(selectedTypes);
+      const response = await saveColsTypes(selectedTypes);
+
+      if (response.data.statusCode !== 200) {
+        throw new Error(response.data.message);
+      }
     } catch (error) {
-      // showSnackbar("Failed to download file", "error");
+      if (error instanceof AxiosError) {
+        showSnackbar(
+          `Fail to save columns types: ${error.response?.data.error}`,
+          "error"
+        );
+      }
     }
   };
 
@@ -66,7 +94,6 @@ export const FileContent = () => {
     const fileId = selectedTypes.fileId;
     try {
       const response = await generateNewFile(fileId);
-      console.log(response);
 
       // Create a URL for the blob
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -87,10 +114,19 @@ export const FileContent = () => {
       // Cleanup
       link.parentNode?.removeChild(link);
     } catch (error) {
-      console.error("Error generating CSV file:", error);
+      if (error instanceof AxiosError) {
+        showSnackbar(
+          `Failed to generate CSV file: ${error.response?.data.error}`,
+          "error"
+        );
+      }
     }
   };
   // jsx -----------------------------------------------------------------
+
+  const beforeUploadingFile = recordContent === undefined && (
+    <p className="text-[20px]">No File Uploaded</p>
+  );
 
   const generateOptions = () => {
     return (Object.values(TypeOptions) as string[]).map((value) => (
@@ -134,7 +170,6 @@ export const FileContent = () => {
     colType: string,
     onChange: React.ChangeEventHandler<HTMLSelectElement> | undefined
   ) => {
-    console.log("colType:", colType); // Log colType here
     return (
       <select
         className="text-center font-light "
@@ -146,7 +181,14 @@ export const FileContent = () => {
     );
   };
 
-  const afterUploadingFile = recordContent && recordType && (
+  const visibleRows = React.useMemo(
+    () =>
+      recordContent &&
+      recordContent.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [page, rowsPerPage, recordContent]
+  );
+
+  const afterUploadingFile = visibleRows && recordType && (
     <div>
       <div className="my-3">
         <label className="text-[20px] font-bold">Records from uploading</label>
@@ -164,7 +206,7 @@ export const FileContent = () => {
               </TableRow>
             </TableBody>
             <TableBody>
-              {recordContent.map((colContent: any) => (
+              {visibleRows.map((colContent: any) => (
                 <TableRow key={uuidv4()}>
                   {generateFileContent(colContent)}
                 </TableRow>
@@ -172,6 +214,15 @@ export const FileContent = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={recordContent.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
         <Button
           variant="contained"
           className={`h-[50px] w-[150px] text-center font-bold my-[10px]`}
@@ -184,7 +235,7 @@ export const FileContent = () => {
           className={`h-[50px] w-[200px] text-center font-bold my-[10px] float-right`}
           onClick={handleGenerateFile}
         >
-          Generate New File
+          Download File
         </Button>
       </div>
     </div>
