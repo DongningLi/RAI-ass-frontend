@@ -7,7 +7,7 @@ Data Process and Display: creating a web application that processes and displays
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
-- [Usage](#usage)
+- [Directory Structure](#Directory-structure)
 
 ## Features
 
