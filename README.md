@@ -29,11 +29,8 @@ Please refer to the backend repository https://github.com/DongningLi/RAI-ass-bac
 $ git clone
 # Go to the root directory
 $ cd my-next-app
-# Install dependencies
-$ npm install
-
-# Start the application
-$ npm run dev
+# Build docker image
+$ docker build -t raiassfrontend .
 ```
 
 ## Directory Structure
