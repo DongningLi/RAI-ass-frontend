@@ -168,7 +168,7 @@ export const FileContent = () => {
       .filter((key) => key !== "fileId" && key !== "_id") // Exclude fileId and _id
       .map((key) => (
         <TableCell key={key} className="text-center">
-          {ColContentForTable[key]}
+          {String(ColContentForTable[key])}
         </TableCell>
       ));
   };
