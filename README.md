@@ -43,9 +43,10 @@ $ docker build -t raiassfrontend .
 |   |   /-- /context        # Context for saving global state
 |   |   /-- /interface      # Common interface
 |   |   /-- /utils          # Utility functionalities
-|   |   /-- /globals.css    # Global css style
-|   |   /-- /layout.tsx     # Shared layout component
-|   |   /-- /page.tsx       # Index page
+|   |   /-- globals.css     # Global css style
+|   |   /-- layout.tsx      # Shared layout component
+|   |   /-- page.tsx        # Index page
+|   |-- Dockerfile      # Dockerfile
 |   |-- /public             # Some public materials
 |-- .gitignore              # Files to ignore
 |-- README.md               # Project overview and guidelines
